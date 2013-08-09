@@ -53,7 +53,7 @@ private:
     unsigned int checkFlags() {
         unsigned int result = 0;
         //if(modifiers & CASEINSENSITIVE) result |= veregex::regex::icase;
-	if(modifiers & CASEINSENSITIVE) result |= Poco::RegularExpression::RE_CASELESS;
+	if(modifiers & Poco::RegularExpression::RE_CARELESS) result |= Poco::RegularExpression::RE_CASELESS;
         return result;
     }
 
@@ -139,9 +139,7 @@ public:
 
         std::string tmp(source);
 
-        cout << " replace " << tmp << " " << value << endl;
         int num = regex->subst( tmp, value, Poco::RegularExpression::RE_GLOBAL ); // now using poco, modifies source
-        cout << " num " << num << endl;
         return tmp;
     }
 
@@ -201,21 +199,19 @@ public:
         value << "]";
         */
 
-        cout << " range setup " << value.str() << endl;
-
         return add(value.str());
     }
 
     VerEx & addModifier(char modifier) {
         switch (modifier) {
             case 'i':
-                modifiers |= CASEINSENSITIVE;
+                modifiers |= Poco::RegularExpression::RE_CARELESS;
                 break;
             case 'm':
-                modifiers |= MULTILINE;
+                modifiers |= Poco::RegularExpression::RE_MULTILINE;
                 break;
             case 'g':
-                modifiers |= GLOBAL;
+                modifiers |= Poco::RegularExpression::RE_GLOBAL;
                 break;
             default:
                 break;
@@ -227,13 +223,13 @@ public:
     VerEx & removeModifier(char modifier) {
         switch (modifier) {
             case 'i':
-                modifiers ^= CASEINSENSITIVE;
+                modifiers ^= Poco::RegularExpression::RE_CARELESS;
                 break;
             case 'm':
-                modifiers ^= MULTILINE;
+                modifiers ^= Poco::RegularExpression::RE_MULTILINE;
                 break;
             case 'g':
-                modifiers ^= GLOBAL;
+                modifiers ^= Poco::RegularExpression::RE_GLOBAL;
                 break;
             default:
                 break;
@@ -293,7 +289,7 @@ public:
 	if(!regex) {
 		regex = ofPtr<Poco::RegularExpression>(new Poco::RegularExpression(pattern, Poco::RegularExpression::RE_UTF8));
 	}
-        if(modifiers & MULTILINE) toTest = value;
+        if(modifiers & Poco::RegularExpression::RE_MULTILINE) toTest = value;
         else                      toTest = reduceLines(value);
 
         Poco::RegularExpression::Match m;
